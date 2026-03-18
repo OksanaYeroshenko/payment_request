@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payment_request_portal,payment.request.portal,model_payment_request,payment_request.group_payment_request_portal,1,0,1,0
+access_payment_request_manager,payment.request.manager,model_payment_request,account.group_account_manager,1,1,1,1
+access_payment_request_create_bill_wizard_manager,payment.request.create.bill.wizard.manager,model_payment_request_create_bill_wizard,account.group_account_manager,1,1,1,1

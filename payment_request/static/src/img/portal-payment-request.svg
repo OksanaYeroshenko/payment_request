@@ -1,0 +1,29 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- shadow -->
+  <path d="M34 58C39.2467 58 43.5 56.433 43.5 54.5C43.5 52.567 39.2467 51 34 51C28.7533 51 24.5 52.567 24.5 54.5C24.5 56.433 28.7533 58 34 58Z" fill="#C1DBF6"></path>
+
+  <!-- document body -->
+  <path d="M23 16.5C23 15.1193 24.1193 14 25.5 14H37.8L43 19.2V43.5C43 44.8807 41.8807 46 40.5 46H25.5C24.1193 46 23 44.8807 23 43.5V16.5Z" fill="white"></path>
+  <path d="M23 16.5C23 15.1193 24.1193 14 25.5 14H37.8L43 19.2V43.5C43 44.8807 41.8807 46 40.5 46H25.5C24.1193 46 23 44.8807 23 43.5V16.5Z" stroke="#374874" stroke-width="1.4"></path>
+
+  <!-- folded corner -->
+  <path d="M37.8 14V18.2C37.8 19.3046 38.6954 20.2 39.8 20.2H43" stroke="#374874" stroke-width="1.4"></path>
+  <path d="M37.8 14L43 19.2H39.8C38.6954 19.2 37.8 18.3046 37.8 17.2V14Z" fill="#FBDBD0"></path>
+
+  <!-- text lines -->
+  <path d="M27.5 25.5H38.5" stroke="#374874" stroke-width="1.4" stroke-linecap="round"></path>
+  <path d="M27.5 30.5H36.5" stroke="#374874" stroke-width="1.4" stroke-linecap="round"></path>
+  <path d="M27.5 35.5H34.5" stroke="#374874" stroke-width="1.4" stroke-linecap="round"></path>
+
+  <!-- small arrow / request action -->
+  <path d="M31 42.5C33.2 41.8 35.1 40.9 37 39.7" stroke="#E58A8A" stroke-width="2" stroke-linecap="round"></path>
+  <path d="M35.5 38.8L37 39.7L36.1 41.3" stroke="#E58A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+
+  <!-- coin -->
+  <path d="M44.5 48.5C48.6421 48.5 52 45.1421 52 41C52 36.8579 48.6421 33.5 44.5 33.5C40.3579 33.5 37 36.8579 37 41C37 45.1421 40.3579 48.5 44.5 48.5Z" fill="#FFF4D6"></path>
+  <path d="M44.5 48.5C48.6421 48.5 52 45.1421 52 41C52 36.8579 48.6421 33.5 44.5 33.5C40.3579 33.5 37 36.8579 37 41C37 45.1421 40.3579 48.5 44.5 48.5Z" stroke="#D9A441" stroke-width="1.8"></path>
+
+  <!-- dollar -->
+  <path d="M44.5 36.9V45.1" stroke="#D9A441" stroke-width="1.8" stroke-linecap="round"></path>
+  <path d="M46.8 38.3C46.2 37.4 45.2 36.9 44.1 36.9C42.4 36.9 41.2 37.8 41.2 39.1C41.2 40.4 42.2 41 44 41.4C45.9 41.8 47.2 42.4 47.2 43.8C47.2 45.2 45.9 46.1 44.1 46.1C42.8 46.1 41.7 45.6 40.9 44.7" stroke="#D9A441" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>

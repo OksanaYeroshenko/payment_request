@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_users_form_payment_request_portal" model="ir.ui.view">
+        <field name="name">res.users.form.payment.request.portal</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Payment Requests" name="payment_request_access">
+                    <group>
+                        <field name="payment_request_portal_access"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

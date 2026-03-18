@@ -1,0 +1,157 @@
+<odoo>
+
+    <record id="view_payment_request_list" model="ir.ui.view">
+        <field name="name">payment.request.list</field>
+        <field name="model">payment.request</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" string="Reference" readonly="1"/>
+                <field name="description" string="Description"/>
+                <field name="due_date" string="Due Date"/>
+                <field name="project" string="Project"/>
+                <field name="partner_id" string="Partner"/>
+                <field name="requester_id" readonly="1" string="Requester"/>
+                <field name="payment_basis" string="Payment Basis"/>
+                <field name="no_invoice_option" string="No Invoice Option" optional="hide"/>
+                <field name="invoice" widget="many2many_binary"/>
+                <field name="currency_id" string="Currency"/>
+                <field name="amount" string="Amount"/>
+                <field name="state" readonly="0" string="State"/>
+                <field name="create_date" readonly="1" string="Creation Date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_payment_request_form" model="ir.ui.view">
+        <field name="name">payment.request.form</field>
+        <field name="model">payment.request</field>
+        <field name="arch" type="xml">
+            <form string="Payment Request">
+                <header>
+
+                    <button name="action_set_processing" type="object" string="Mark Processing"
+                            invisible="state not in ['new', 'stuck', 'cancelled']"/>
+                    <button name="action_set_stuck" type="object" string="Mark Stuck"
+                            invisible="state not in ['new', 'processing', 'cancelled']"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state not in ['new', 'processing', 'stuck']"/>
+                    <button name="action_mark_as_paid" type="object" string="Mark as Paid"
+                            invisible="state not in ['new', 'processing', 'stuck', 'cancelled']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="processing,stuck,in_payment,paid"
+                           options="{'clickable': False}"/>
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_vendor_bill"
+                                icon="fa-pencil-square-o" invisible="vendor_bill_ids_count == 0">
+                            <field string="Vendor Bills" name="vendor_bill_ids_count" widget="statinfo"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1><field name="sequence" nolabel="1" readonly="1"/></h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                   string="Amount" readonly="readonly"/>
+                            <field name="partner_id" string="Partner" readonly="readonly"/>
+                            <field name="description" string="Description" readonly="readonly"/>
+                            <field name="long_description" string="Long Description" readonly="readonly"/>
+                            <field name="payment_basis" string="Payment Basis" readonly="readonly"/>
+                            <field name="no_invoice_option" string="No Invoice Option"
+                                   invisible="payment_basis == 'invoice'" readonly="readonly"/>
+                        </group>
+                        <group>
+                            <field name="due_date" string="Due Date" readonly="readonly"/>
+                            <field name="requester_id" readonly="1" string="Requester"/>
+                            <field name="project" string="Project" readonly="readonly"/>
+                            <field name="currency_id" string="Currency" readonly="readonly"/>
+                        </group>
+                    </group>
+                    <group invisible="payment_basis != 'invoice'" string="Invoice Attached">
+                        <group>
+                            <field name="invoice" widget="many2many_binary" readonly="readonly"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <group invisible="no_invoice_option != 'bank_card'" string="Ukrainian Bank Card Details">
+                        <group>
+                            <field name="bank_card_name" string="Cardholder Name" readonly="readonly"/>
+                            <field name="bank_card_number" string="Card Number" readonly="readonly"/>
+                            <field name="bank_card_ussuing_bank" string="Issuing Bank" readonly="readonly"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <group invisible="no_invoice_option != 'int_bank_account'" string="International Bank Account">
+                        <group>
+                            <field name="int_bank_acc_name" string="Account Holder Name" readonly="readonly"/>
+                            <field name="int_bank_acc_iban" string="IBAN" readonly="readonly"/>
+                            <field name="int_bank_acc_bic" string="SWIFT/BIC" readonly="readonly"/>
+                            <field name="int_bank_acc_bank" string="Bank Name" readonly="readonly"/>
+                            <field name="int_bank_acc_bank_address" string="Bank Address" readonly="readonly"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <group invisible="no_invoice_option != 'paypal'" string="PayPal">
+                        <group>
+                            <field name="paypal_name" string="Account Name" readonly="readonly"/>
+                            <field name="paypal_email" string="Email" readonly="readonly"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <group invisible="no_invoice_option != 'payoneer_wise' or payment_basis == 'invoice'"
+                           string="Payoneer / Wise">
+                        <group>
+                            <field name="payoneer_wise_name" string="Account Name" readonly="readonly"/>
+                            <field name="payoneer_wise_acc_number" string="Account Number" readonly="readonly"/>
+                            <field name="payoneer_wise_aba" string="Routing (ABA) Number" readonly="readonly"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <group invisible="no_invoice_option != 'crypto'" string="Crypto">
+                        <group>
+                            <field name="crypto_wallet_address" readonly="readonly"/>
+                            <field name="crypto_network" readonly="readonly"/>
+                        </group>
+                        <group/>
+                    </group>
+                </sheet>
+                <div class="o_attachment_preview"/>
+                <chatter reload_on_attachment="True"/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_payment_request" model="ir.actions.act_window">
+        <field name="name">Payment Requests</field>
+        <field name="res_model">payment.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_payment_request_list"/>
+    </record>
+
+    <record id="action_payment_request_open" model="ir.actions.act_window">
+        <field name="name">Opened Requests</field>
+        <field name="res_model">payment.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_payment_request_list"/>
+        <field name="domain">[("state", "not in", ["paid", "cancelled"])]</field>
+    </record>
+
+    <record id="action_payment_request_closed" model="ir.actions.act_window">
+        <field name="name">Closed Requests</field>
+        <field name="res_model">payment.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_payment_request_list"/>
+        <field name="domain">[("state", "in", ["paid", "cancelled"])]</field>
+    </record>
+
+    <menuitem id="menu_payment_request_root" name="Payment Request" sequence="20"
+              groups="account.group_account_manager" web_icon="payment_request,static/description/icon.png"/>
+    <menuitem id="menu_payment_request_open" name="Opened" parent="menu_payment_request_root"
+              action="action_payment_request_open" groups="account.group_account_manager" sequence="5"/>
+    <menuitem id="menu_payment_request_closed" name="Closed" parent="menu_payment_request_root"
+              action="action_payment_request_closed" groups="account.group_account_manager" sequence="15"/>
+
+</odoo>

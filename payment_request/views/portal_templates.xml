@@ -1,0 +1,764 @@
+<odoo>
+    <!-- Portal home tile -->
+    <template id="portal_my_home_payment_request" inherit_id="portal.portal_my_home"
+              name="Payment Requests Portal Home">
+        <xpath expr="//div[@id='portal_common_category']" position="inside">
+            <t t-if="request.env.user.has_group('payment_request.group_payment_request_portal')">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/payment_request/static/src/img/portal-payment-request.svg'"/>
+                    <t t-set="title">Payment Requests</t>
+                    <t t-set="text">Create and track your payment requests</t>
+                    <t t-set="url" t-value="'/my/payment-request'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_payment_request_list" name="Payment Requests">
+        <t t-call="portal.portal_layout">
+            <t t-set="current_partner" t-value="partner or request.env.user.partner_id"/>
+            <div class="container o_portal py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">My Payment Requests</h2>
+                    <a class="btn btn-primary" href="/my/payment-request/new">New Payment Request</a>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form class="row g-2 align-items-end" action="/my/payment-request" method="get">
+                            <div class="col-md-3">
+                                <label class="form-label">State</label>
+                                <select class="form-select" name="state">
+                                    <option value="">All states</option>
+                                    <t t-foreach="state_options" t-as="s">
+                                        <option t-att-value="s[0]" t-att-selected="s[0] == filters.get('state')"><t
+                                                t-esc="s[1]"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Due from</label>
+                                <input class="form-control" type="date" name="due_date_from"
+                                       t-att-value="filters.get('due_date_from', '')"/>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Due to</label>
+                                <input class="form-control" type="date" name="due_date_to"
+                                       t-att-value="filters.get('due_date_to', '')"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Description</label>
+                                <input class="form-control" type="text" name="description"
+                                       placeholder="Search description" t-att-value="filters.get('description', '')"/>
+                            </div>
+                            <div class="col-md-2 d-flex gap-2">
+                                <button class="btn btn-primary flex-grow-1" type="submit">Apply</button>
+                                <a class="btn btn-outline-secondary" href="/my/payment-request">Reset</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <t t-call="portal.pager"/>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Description</th>
+                            <th class="text-end">Amount</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="requests">
+                            <t t-foreach="requests" t-as="r">
+                                <tr>
+                                    <td>
+                                        <a t-att-href="'/my/payment-request/%s%s' % (r.id, filters_query and ('?' + filters_query) or '')"
+                                           class="text-decoration-none">
+                                            <t t-esc="r.sequence or '-'"/>
+                                        </a>
+                                    </td>
+                                    <td><t t-esc="r.description or '-'"/></td>
+                                    <td class="text-end"><t t-esc="r.amount"/> <t
+                                            t-esc="r.currency_id.name"/></td>
+                                    <td>
+                                        <t t-set="state_label"
+                                           t-value="dict(r._fields['state'].selection).get(r.state, r.state or '-')"/>
+                                        <t t-esc="state_label"/>
+                                    </td>
+                                    <td><t t-esc="r.due_date"/></td>
+                                    <td class="text-end">
+                                        <a class="btn btn-sm btn-outline-secondary"
+                                           t-att-href="'/my/payment-request/%s/duplicate' % r.id" title="Duplicate">
+                                            <i class="fa fa-copy" aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                        <t t-if="not requests">
+                            <tr>
+                                <td colspan="5" class="text-muted">No payment requests yet.</td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <t t-call="portal.pager"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_payment_request_form" name="New Payment Request">
+        <t t-call="portal.portal_layout">
+            <t t-set="current_partner" t-value="partner or request.env.user.partner_id"/>
+            <div class="container o_portal py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">New Payment Request</h2>
+                    <a class="btn btn-secondary" href="/my/payment-request">Back to Requests</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/my/payment-request/create" method="post" enctype="multipart/form-data" id="form">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="partner_id" id="partner_id"
+                                   t-att-value="form_data.get('partner_id') or ''"/>
+
+                            <t t-if="error in ('amount_required', 'amount_invalid', 'description_required', 'partner_required', 'invoice_required', 'no_invoice_option_required')">
+                                <div class="alert alert-danger mb-3" role="alert">
+                                    <t t-if="error == 'partner_required'">Partner is required.</t>
+                                    <t t-elif="error == 'description_required'">Description is required.</t>
+                                    <t t-elif="error == 'invoice_required'">Invoice file is required when Payment Basis
+                                        is Invoice.</t>
+                                    <t t-elif="error == 'no_invoice_option_required'">Please choose a No Invoice
+                                        option.</t>
+                                    <t t-elif="error == 'amount_invalid'">Amount must be a valid number.</t>
+                                    <t t-else="">Amount is required and must be a positive number.</t>
+                                </div>
+                            </t>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Short Description for the bill (English Only)</label>
+                                    <input class="form-control"
+                                           name="description"
+                                           required="1"
+                                           maxlength="80"
+                                           pattern="^[A-Za-z0-9 ]{1,80}$"
+                                           title="Use only English letters, digits, and spaces (max 80 characters)."
+                                           t-att-value="form_data.get('description', '')"/>
+                                    <label class="form-label mt-2">Long Description (Optional)</label>
+                                    <textarea class="form-control" name="long_description" rows="3"><t
+                                            t-esc="form_data.get('long_description', '')"/></textarea>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Due Date</label>
+                                    <input class="form-control" type="date" name="due_date" required="1"
+                                           t-att-value="form_data.get('due_date', '')"/>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Project</label>
+                                    <select class="form-select" name="project" required="1">
+                                        <option value="">Select project...</option>
+                                        <t t-foreach="projects" t-as="p">
+                                            <option t-att-value="p.id"
+                                                    t-att-selected="str(p.id) == str(form_data.get('project', ''))"><t
+                                                    t-esc="p.display_name"/></option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Partner</label>
+                                    <div class="position-relative">
+                                        <input type="text" class="form-control" required="1" id="partner_search"
+                                               placeholder="Search partner..."
+                                               t-att-value="form_partner and form_partner.name or ''"
+                                               autocomplete="off"/>
+                                        <div class="list-group position-absolute w-100 shadow-sm d-none"
+                                             id="partner_results"
+                                             style="z-index: 1000; max-height: 240px; overflow-y: auto;"></div>
+                                    </div>
+                                    <small class="text-muted">Type to find a partner; click a result to select.</small>
+                                    <div class="mt-2">
+                                        <button class="btn btn-link p-0" type="button" id="partner_create_toggle">
+                                            Can't find partner? Create new</button>
+                                    </div>
+                                    <div class="mt-2 border rounded p-3 d-none" id="partner_create_box">
+                                        <div class="mb-2">
+                                            <label class="form-label mb-1">Name<span class="text-danger">
+                                                *</span></label>
+                                            <input class="form-control" type="text" id="new_partner_name"
+                                                   placeholder="Partner name"/>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label mb-1">Email</label>
+                                            <input class="form-control" type="email" id="new_partner_email"
+                                                   placeholder="email@example.com"/>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label mb-1">Phone</label>
+                                            <input class="form-control" type="text" id="new_partner_phone"
+                                                   placeholder="Phone"/>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-sm btn-primary" type="button"
+                                                    id="partner_create_btn">Create partner</button>
+                                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                    id="partner_create_cancel">Cancel</button>
+                                        </div>
+                                        <div class="text-danger small mt-2 d-none" id="partner_create_error"></div>
+                                    </div>
+                                    <div class="mt-1 text-danger small d-none" id="partner_required_error">Partner is
+                                        required.</div>
+                                    <div class="mt-1 text-danger small d-none" id="no_invoice_required_error">Please
+                                        choose a No Invoice option.</div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Payment Basis</label>
+                                    <select class="form-select" name="payment_basis" id="payment_basis">
+                                        <t t-foreach="payment_basis_options" t-as="opt">
+                                            <option t-att-value="opt[0]"
+                                                    t-att-selected="opt[0] == (form_data.get('payment_basis') or 'invoice')"><t
+                                                    t-esc="opt[1]"/></option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Currency</label>
+                                    <select class="form-select" name="currency_id" id="currency_id">
+                                        <t t-foreach="currencies" t-as="c">
+                                            <option t-att-value="c.id"
+                                                    t-att-selected="str(c.id) == str(form_data.get('currency_id') or default_currency.id)">
+                                                <t t-esc="c.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Amount</label>
+                                    <input class="form-control" type="number" step="0.01" name="amount" required="1"
+                                           t-att-value="form_data.get('amount', '')"/>
+                                </div>
+                            </div>
+
+                            <div class="mt-3" id="invoice_block">
+                                <label class="form-label">Invoice (upload)</label>
+                                <input class="form-control" type="file" name="invoice" id="invoice_input"/>
+                                <div class="text-danger small d-none" id="invoice_required_error">Invoice file is
+                                    required when Payment Basis is Invoice.</div>
+                            </div>
+
+                            <div class="mt-3 d-none" id="no_invoice_block">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">No Invoice Option</label>
+                                        <select class="form-select" name="no_invoice_option"
+                                                id="no_invoice_option">
+                                            <option value="">Select...</option>
+                                            <t t-foreach="no_invoice_options" t-as="opt">
+                                                <option t-att-value="opt[0]"
+                                                        t-att-selected="opt[0] == (form_data.get('no_invoice_option') or 'payoneer_wise')"><t
+                                                        t-esc="opt[1]"/></option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mt-2 d-none" data-pr-option="bank_card">
+                                    <div class="col-md-4"><label class="form-label">Cardholder Name</label><input
+                                            class="form-control" name="bank_card_name"
+                                            t-att-value="form_data.get('bank_card_name', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">Card Number</label><input
+                                            class="form-control" name="bank_card_number"
+                                            t-att-value="form_data.get('bank_card_number', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">Issuing Bank</label><input
+                                            class="form-control" name="bank_card_ussuing_bank"
+                                            t-att-value="form_data.get('bank_card_ussuing_bank', '')"/></div>
+                                </div>
+
+                                <div class="row g-3 mt-2 d-none" data-pr-option="int_bank_account">
+                                    <div class="col-md-4"><label class="form-label">Account Holder Name</label><input
+                                            class="form-control" name="int_bank_acc_name"
+                                            t-att-value="form_data.get('int_bank_acc_name', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">IBAN</label><input
+                                            class="form-control" name="int_bank_acc_iban"
+                                            t-att-value="form_data.get('int_bank_acc_iban', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">SWIFT/BIC</label><input
+                                            class="form-control" name="int_bank_acc_bic"
+                                            t-att-value="form_data.get('int_bank_acc_bic', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">Bank Name</label><input
+                                            class="form-control" name="int_bank_acc_bank"
+                                            t-att-value="form_data.get('int_bank_acc_bank', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">Bank Address</label><input
+                                            class="form-control" name="int_bank_acc_bank_address"
+                                            t-att-value="form_data.get('int_bank_acc_bank_address', '')"/></div>
+                                </div>
+
+                                <div class="row g-3 mt-2 d-none" data-pr-option="paypal">
+                                    <div class="col-md-6"><label class="form-label">Account Name</label><input
+                                            class="form-control" name="paypal_name"
+                                            t-att-value="form_data.get('paypal_name', '')"/></div>
+                                    <div class="col-md-6"><label class="form-label">Email</label><input
+                                            class="form-control" name="paypal_email"
+                                            t-att-value="form_data.get('paypal_email', '')"/></div>
+                                </div>
+
+                                <div class="row g-3 mt-2 d-none" data-pr-option="payoneer_wise">
+                                    <div class="col-md-4"><label class="form-label">Account Name</label><input
+                                            class="form-control" name="payoneer_wise_name"
+                                            t-att-value="form_data.get('payoneer_wise_name', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">Account Number</label><input
+                                            class="form-control" name="payoneer_wise_acc_number"
+                                            t-att-value="form_data.get('payoneer_wise_acc_number', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">Routing (ABA) Number</label><input
+                                            class="form-control" name="payoneer_wise_aba"
+                                            t-att-value="form_data.get('payoneer_wise_aba', '')"/></div>
+                                </div>
+
+                                <div class="row g-3 mt-2 d-none" data-pr-option="crypto">
+                                    <div class="col-md-4"><label class="form-label">Wallet Address</label><input
+                                            class="form-control" name="crypto_wallet_address"
+                                            t-att-value="form_data.get('crypto_wallet_address', '')"/></div>
+                                    <div class="col-md-4"><label class="form-label">Network / Protocol (only TRC-20
+                                        supported)</label><input class="form-control" name="crypto_network"
+                                                                 t-att-value="form_data.get('crypto_network', '')"/></div>
+                                </div>
+
+                            </div>
+
+                            <div class="mt-3 d-flex gap-2">
+                                <button class="btn btn-primary" type="submit" id="submit">Submit Request</button>
+                                <a class="btn btn-outline-secondary" href="/my/payment-request">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                <![CDATA[
+                (function () {
+                    const basisSel = document.getElementById('payment_basis');
+                    const invoiceBlock = document.getElementById('invoice_block');
+                    const noInvoiceBlock = document.getElementById('no_invoice_block');
+                    const noInvSel = document.getElementById('no_invoice_option');
+                    const optionBlocks = document.querySelectorAll('[data-pr-option]');
+                    const partnerSearch = document.getElementById('partner_search');
+                    const partnerResults = document.getElementById('partner_results');
+                    const partnerIdInput = document.getElementById('partner_id');
+                    const partnerErr = document.getElementById('partner_required_error');
+                    const invoiceInput = document.getElementById('invoice_input');
+                    const invoiceErr = document.getElementById('invoice_required_error');
+                    const noInvErr = document.getElementById('no_invoice_required_error');
+                    const csrfToken = document.querySelector('#form input[name="csrf_token"]').value;
+                    const formEl = document.getElementById('form');
+                    const createToggle = document.getElementById('partner_create_toggle');
+                    const createBox = document.getElementById('partner_create_box');
+                    const createBtn = document.getElementById('partner_create_btn');
+                    const createCancel = document.getElementById('partner_create_cancel');
+                    const createErr = document.getElementById('partner_create_error');
+                    const newName = document.getElementById('new_partner_name');
+                    const newEmail = document.getElementById('new_partner_email');
+                    const newPhone = document.getElementById('new_partner_phone');
+                    let searchTimer;
+
+                    function toggleBasis() {
+                        const isInvoice = basisSel.value === 'invoice';
+                        invoiceBlock.classList.toggle('d-none', !isInvoice);
+                        noInvoiceBlock.classList.toggle('d-none', isInvoice);
+                        if (invoiceInput) {
+                            invoiceInput.required = isInvoice;
+                            if (!isInvoice) {
+                                invoiceErr && invoiceErr.classList.add('d-none');
+                            }
+                        }
+                        if (!isInvoice) {
+                            // Suggest fields for no-invoice basis: make option required and pick default if empty
+                            if (noInvSel) {
+                                noInvSel.required = true;
+                                if (!noInvSel.value) {
+                                    const defaultOpt = noInvSel.querySelector('option[value="payoneer_wise"]') || noInvSel.querySelector('option[value]:not([value=""])');
+                                    if (defaultOpt) {
+                                        noInvSel.value = defaultOpt.value;
+                                    }
+                                }
+                            }
+                            toggleOption();
+                        } else {
+                            if (noInvSel) {
+                                noInvSel.required = false;
+                                noInvErr && noInvErr.classList.add('d-none');
+                            }
+                            // clear required flags on all no-invoice option inputs when invoice basis
+                            optionBlocks.forEach((blk) => {
+                                blk.querySelectorAll('input, select, textarea').forEach((inp) => {
+                                    inp.required = false;
+                                });
+                            });
+                        }
+                    }
+
+                    function toggleOption() {
+                        const val = noInvSel ? noInvSel.value : '';
+                        optionBlocks.forEach((blk) => {
+                            const isActive = blk.getAttribute('data-pr-option') === val;
+                            blk.classList.toggle('d-none', !isActive);
+                            blk.querySelectorAll('input, select, textarea').forEach((inp) => {
+                                inp.required = isActive && basisSel.value === 'no_invoice';
+                            });
+                        });
+                        if (val) {
+                            noInvErr && noInvErr.classList.add('d-none');
+                        }
+                    }
+
+                    function renderPartners(data) {
+                        partnerResults.innerHTML = '';
+                        if (!data.length) {
+                            partnerResults.classList.add('d-none');
+                            return;
+                        }
+                        data.forEach((item) => {
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'list-group-item list-group-item-action';
+                            btn.textContent = item.name;
+                            btn.addEventListener('click', () => {
+                                partnerIdInput.value = item.id;
+                                partnerSearch.value = item.name;
+                                partnerResults.classList.add('d-none');
+                            });
+                            partnerResults.appendChild(btn);
+                        });
+                        partnerResults.classList.remove('d-none');
+                    }
+
+                    function fetchPartners(term) {
+                        fetch('/my/payment-request/partner-search', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: JSON.stringify({term}),
+                        })
+                                .then((resp) => resp.json())
+                                .then((data) => {
+                                    renderPartners(data || []);
+                                })
+                                .catch(() => {
+                                    partnerResults.classList.add('d-none');
+                                });
+                    }
+
+                    function onPartnerInput() {
+                        const term = (partnerSearch.value || '').trim();
+                        partnerIdInput.value = '';
+                        if (!term) {
+                            partnerResults.classList.add('d-none');
+                            return;
+                        }
+                        clearTimeout(searchTimer);
+                        searchTimer = setTimeout(() => fetchPartners(term), 200);
+                    }
+
+                    function hideResultsWithDelay() {
+                        setTimeout(() => partnerResults.classList.add('d-none'), 150);
+                    }
+
+                    function ensurePartnerId() {
+                        if (!partnerIdInput.value && currentPartnerId) {
+                            partnerIdInput.value = currentPartnerId;
+                        }
+                    }
+
+                    function showCreateBox() {
+                        createBox.classList.remove('d-none');
+                        createErr.classList.add('d-none');
+                        createErr.textContent = '';
+                        newName.focus();
+                    }
+
+                    function hideCreateBox() {
+                        createBox.classList.add('d-none');
+                        createErr.classList.add('d-none');
+                        createErr.textContent = '';
+                        newName.value = '';
+                        newEmail.value = '';
+                        newPhone.value = '';
+                    }
+
+                    function createPartner() {
+                        const name = (newName.value || '').trim();
+                        const email = (newEmail.value || '').trim();
+                        const phone = (newPhone.value || '').trim();
+                        if (!name) {
+                            createErr.textContent = 'Name is required.';
+                            createErr.classList.remove('d-none');
+                            newName.focus();
+                            return;
+                        }
+                        createErr.classList.add('d-none');
+                        fetch('/my/payment-request/partner-create', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: JSON.stringify({name, email, phone}),
+                        })
+                                .then((resp) => resp.json())
+                                .then((data) => {
+                                    const payload = data && data.result ? data.result : data; // handle wrapped responses
+                                    if (!payload || payload.error) {
+                                        createErr.textContent = payload && payload.error === 'name_required' ? 'Name is required.' : 'Could not create partner.';
+                                        createErr.classList.remove('d-none');
+                                        return;
+                                    }
+                                    const displayName = payload.display_name || payload.name || name;
+                                    partnerIdInput.value = payload.id;
+                                    partnerSearch.value = displayName;
+                                    currentPartnerId = payload.id;
+                                    partnerErr && partnerErr.classList.add('d-none');
+                                    hideCreateBox();
+                                })
+                                .catch(() => {
+                                    createErr.textContent = 'Could not create partner.';
+                                    createErr.classList.remove('d-none');
+                                });
+                    }
+
+                    createToggle && createToggle.addEventListener('click', showCreateBox);
+                    createCancel && createCancel.addEventListener('click', hideCreateBox);
+                    createBtn && createBtn.addEventListener('click', createPartner);
+
+                    basisSel && basisSel.addEventListener('change', toggleBasis);
+                    noInvSel && noInvSel.addEventListener('change', () => {
+                        noInvErr && noInvErr.classList.add('d-none');
+                        toggleOption();
+                    });
+                    partnerSearch && partnerSearch.addEventListener('input', () => {
+                        partnerErr && partnerErr.classList.add('d-none');
+                        onPartnerInput();
+                    });
+                    partnerSearch && partnerSearch.addEventListener('blur', hideResultsWithDelay);
+                    invoiceInput && invoiceInput.addEventListener('change', () => {
+                        if (invoiceInput.files && invoiceInput.files.length) {
+                            invoiceErr && invoiceErr.classList.add('d-none');
+                        }
+                    });
+                    formEl && formEl.addEventListener('submit', (ev) => {
+                        ensurePartnerId();
+                        let hasError = false;
+                        let focusTarget = null;
+                        if (!partnerIdInput.value) {
+                            partnerErr && partnerErr.classList.remove('d-none');
+                            hasError = true;
+                            focusTarget = partnerSearch || partnerIdInput;
+                        }
+                        if (basisSel.value === 'invoice') {
+                            const hasFile = invoiceInput && invoiceInput.files && invoiceInput.files.length;
+                            if (!hasFile) {
+                                invoiceErr && invoiceErr.classList.remove('d-none');
+                                hasError = true;
+                                focusTarget = focusTarget || invoiceInput;
+                            }
+                        }
+                        if (basisSel.value === 'no_invoice' && (!noInvSel || !noInvSel.value)) {
+                            noInvErr && noInvErr.classList.remove('d-none');
+                            hasError = true;
+                            focusTarget = focusTarget || noInvSel;
+                        }
+                        if (hasError) {
+                            ev.preventDefault();
+                            if (focusTarget) {
+                                focusTarget.scrollIntoView({behavior: 'smooth', block: 'center'});
+                                focusTarget.focus({preventScroll: true});
+                            }
+                        }
+                    });
+
+                    toggleBasis();
+                    if (basisSel && basisSel.value !== 'invoice') {
+                        toggleOption();
+                    }
+                })();
+                ]]>
+            </script>
+
+        </t>
+    </template>
+
+    <template id="portal_payment_request_detail" name="Payment Request Detail">
+        <t t-call="portal.portal_layout">
+            <t t-call-assets="portal.assets_chatter" t-js="true"/>
+            <div class="container o_portal py-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <a t-if="prev_id"
+                           t-att-href="'/my/payment-request/%s%s' % (prev_id, filters_query and ('?' + filters_query) or '')"
+                           class="btn btn-outline-secondary" title="Previous"><i class="fa fa-chevron-left"
+                                                                                 aria-hidden="true"></i></a>
+                        <h2 class="mb-0">Payment Request <t t-if="request_rec.sequence">(<t
+                                t-esc="request_rec.sequence"/>)</t></h2>
+                        <a t-if="next_id"
+                           t-att-href="'/my/payment-request/%s%s' % (next_id, filters_query and ('?' + filters_query) or '')"
+                           class="btn btn-outline-secondary" title="Next"><i class="fa fa-chevron-right"
+                                                                             aria-hidden="true"></i></a>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-outline-secondary"
+                           t-att-href="'/my/payment-request%s' % (filters_query and ('?' + filters_query) or '')">Back
+                            to Requests</a>
+                        <a class="btn btn-outline-secondary"
+                           t-att-href="'/my/payment-request/%s/duplicate' % request_rec.id" title="Duplicate"><i
+                                class="fa fa-copy" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="fw-bold">Description</div>
+                                <div><t t-esc="request_rec.description or '-'"/></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fw-bold">Amount</div>
+                                <div><t t-esc="request_rec.amount"/> <t
+                                        t-esc="request_rec.currency_id.name"/></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fw-bold">State</div>
+                                <div>
+                                    <t t-set="state_label"
+                                       t-value="dict(request_rec._fields['state'].selection).get(request_rec.state, request_rec.state or '-')"/>
+                                    <t t-esc="state_label"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-2" t-if="request_rec.long_description">
+                            <div class="col-md-12">
+                                <div class="fw-bold">Long Description</div>
+                                <div><t t-esc="request_rec.long_description"/></div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-3">
+                                <div class="fw-bold">Due Date</div>
+                                <div><t t-esc="request_rec.due_date or '-'"/></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fw-bold">Payment Basis</div>
+                                <div><t t-set="basis_label"
+                                        t-value="dict(request_rec._fields['payment_basis'].selection).get(request_rec.payment_basis, request_rec.payment_basis or '-')"/>
+                                    <t t-esc="basis_label"/></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fw-bold">Partner</div>
+                                <div><t t-esc="request_rec.partner_id.display_name"/></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fw-bold">Project</div>
+                                <div><t t-esc="request_rec.project.display_name or '-'"/></div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-2" t-if="request_rec.payment_basis == 'no_invoice'">
+                            <div class="col-md-3">
+                                <div class="fw-bold">No Invoice Option</div>
+                                <div><t t-set="no_inv_label"
+                                        t-value="dict(request_rec._fields['no_invoice_option'].selection).get(request_rec.no_invoice_option, request_rec.no_invoice_option or '-')"/>
+                                    <t t-esc="no_inv_label"/></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fw-bold">Requester</div>
+                                <div><t t-esc="request_rec.requester_id.display_name"/></div>
+                            </div>
+                        </div>
+                        <t t-if="request_rec.payment_basis != 'no_invoice'">
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-3">
+                                    <div class="fw-bold">Requester</div>
+                                    <div><t t-esc="request_rec.requester_id.display_name"/></div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-if="request_rec.payment_basis == 'invoice'">
+                            <div class="mt-3" t-if="request_rec.message_main_attachment_id and request_rec.message_main_attachment_id in request_rec.invoice">
+                                <a class="btn btn-sm btn-outline-secondary"
+                                   t-att-href="'/my/payment-request/%s/invoice' % request_rec.id">Download invoice</a>
+                            </div>
+                        </t>
+                        <t t-if="request_rec.payment_basis == 'no_invoice'">
+                            <div class="mt-3">
+                                <div class="fw-bold mb-2">Payment Details</div>
+                                <t t-if="request_rec.no_invoice_option == 'bank_card'">
+                                    <div>Name: <t t-esc="request_rec.bank_card_name or '-'"/></div>
+                                    <div>Card Number: <t t-esc="request_rec.bank_card_number or '-'"/></div>
+                                    <div>Issuing Bank: <t t-esc="request_rec.bank_card_ussuing_bank or '-'"/></div>
+                                </t>
+                                <t t-elif="request_rec.no_invoice_option == 'int_bank_account'">
+                                    <div>Account Holder: <t t-esc="request_rec.int_bank_acc_name or '-'"/></div>
+                                    <div>IBAN: <t t-esc="request_rec.int_bank_acc_iban or '-'"/></div>
+                                    <div>SWIFT/BIC: <t t-esc="request_rec.int_bank_acc_bic or '-'"/></div>
+                                    <div>Bank: <t t-esc="request_rec.int_bank_acc_bank or '-'"/></div>
+                                    <div>Bank Address: <t
+                                            t-esc="request_rec.int_bank_acc_bank_address or '-'"/></div>
+                                </t>
+                                <t t-elif="request_rec.no_invoice_option == 'paypal'">
+                                    <div>Account Name: <t t-esc="request_rec.paypal_name or '-'"/></div>
+                                    <div>Email: <t t-esc="request_rec.paypal_email or '-'"/></div>
+                                </t>
+                                <t t-elif="request_rec.no_invoice_option == 'payoneer_wise'">
+                                    <div>Account Name: <t t-esc="request_rec.payoneer_wise_name or '-'"/></div>
+                                    <div>Account Number: <t
+                                            t-esc="request_rec.payoneer_wise_acc_number or '-'"/></div>
+                                    <div>Routing (ABA): <t t-esc="request_rec.payoneer_wise_aba or '-'"/></div>
+                                </t>
+                                <t t-elif="request_rec.no_invoice_option == 'crypto'">
+                                    <div>Wallet Address: <t t-esc="request_rec.crypto_wallet_address or '-'"/></div>
+                                    <div>Network/Protocol: <t t-esc="request_rec.crypto_network or '-'"/></div>
+                                </t>
+                                <t t-else="">
+                                    <div class="text-muted">No additional details.</div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="text-muted small">Created: <t t-esc="request_rec.create_date"/></div>
+                    <div class="text-muted small">Last updated: <t t-esc="request_rec.write_date"/></div>
+                </div>
+
+                <div class="mt-3">
+                    <t t-call="portal.message_thread">
+                        <t t-set="object" t-value="request_rec"/>
+                        <t t-set="token" t-value="token"/>
+                        <t t-set="disable_composer" t-value="False"/>
+                        <t t-set="two_columns" t-value="False"/>
+                    </t>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>
