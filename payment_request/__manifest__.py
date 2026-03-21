@@ -1,9 +1,16 @@
 {
     'name': "Payment Request",
-    'summary': "Payment Request",
+    'summary': "Payment request workflow with portal submission, comments, status tracking, and vendor bill creation",
+    'description':
+    """
+    Payment Request
+
+Structured workflow for collecting, reviewing, and processing payment requests in Odoo 18.
+Includes portal submission, supporting documents, status tracking, and direct vendor bill creation.
+    """,
     'author': "Oksana Yeroshenko",
     'website': "https://odoo-pro.com.ua/",
-    'category': 'Finance',
+    'category': 'Accounting',
     'version': '18.0.0.1.0',
     'depends': ['account', 'portal', 'hr'],
     'data': [
@@ -18,8 +25,8 @@
         'views/account_vendor_bills_to_check_menu.xml',
         'views/account_move_views.xml',
     ],
+    'images': ['static/description/banner.png'],
     'application': True,
     'installable': True,
-    'sequence': -100,
     'license': 'LGPL-3',
 }

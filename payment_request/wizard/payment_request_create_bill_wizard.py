@@ -81,7 +81,7 @@ class PaymentRequestCreateBillWizard(models.TransientModel):
         if self.journal_id.company_id != self.company_id:
             raise UserError(_("Selected journal does not belong to selected company."))
 
-        analytic_account_id = request_rec.project.analytic_account_id
+        analytic_account_id = request_rec.project
         move_vals = {
             "move_type": "in_invoice",
             "company_id": self.company_id.id,

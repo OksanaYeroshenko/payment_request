@@ -14,7 +14,7 @@ class PaymentRequest(models.Model):
     long_description = fields.Text(tracking=True, copy=False)
     sequence = fields.Char(string="Reference", readonly=True, copy=False, default="New")
     due_date = fields.Date()
-    project = fields.Many2one("hr.department", string="Project")
+    project = fields.Many2one("account.analytic.account", string="Project")
     partner_id = fields.Many2one("res.partner", required=True, tracking=True)
     requester_id = fields.Many2one(
         "res.users", string="Requester", default=lambda self: self.env.user, readonly=True)
@@ -27,7 +27,7 @@ class PaymentRequest(models.Model):
     invoice = fields.Many2many("ir.attachment", string="Upload File", copy=False)
     no_invoice_option = fields.Selection(
         [
-            ("bank_card", "Ukrainian Bank Card"),
+            ("bank_card", "Bank Card"),
             ("int_bank_account", "International Bank Account"),
             ("paypal", "PayPal"),
             ("payoneer_wise", "Payoneer, Wise"),
@@ -36,9 +36,9 @@ class PaymentRequest(models.Model):
         default="payoneer_wise",
         required=True,
     )
-    bank_card_name = fields.Char(string="Ukrainian Cardholder Name")
+    bank_card_name = fields.Char(string="Cardholder Name")
     bank_card_number = fields.Char(string="Card Number")
-    bank_card_ussuing_bank = fields.Char(string="Ukrainian Issuing Bank")
+    bank_card_ussuing_bank = fields.Char(string="Issuing Bank")
     int_bank_acc_name = fields.Char(string="Account Holder Name")
     int_bank_acc_iban = fields.Char(string="IBAN")
     int_bank_acc_bic = fields.Char(string="SWIFT/BIC")

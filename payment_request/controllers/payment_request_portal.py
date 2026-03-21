@@ -37,7 +37,7 @@ class PortalPaymentRequest(http.Controller):
         currencies = request.env['res.currency'].sudo().search([])
         default_currency = request.env.ref('base.USD', raise_if_not_found=False) or request.env[
             'res.currency'].sudo().search([('name', '=', 'USD')], limit=1) or request.env.company.currency_id
-        projects = request.env['hr.department'].sudo().search([])
+        projects = request.env['account.analytic.account'].sudo().search([])
         partner = current_partner
         partners = partner
 
