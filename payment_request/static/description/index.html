@@ -4,9 +4,26 @@
         <h2 class="oe_slogan">Structured payment request workflow for Odoo 18</h2>
         <p class="oe_mt32" style="text-align: center; font-size: 16px; max-width: 900px; margin: 0 auto;">
             Collect, review, and process payment requests in a structured way inside Odoo.
-            This module helps finance teams manage incoming requests, track their status, communicate with requesters,
-            store supporting documents, and create vendor bills directly from approved requests.
+            The module helps finance teams manage incoming requests, track statuses, communicate with requesters,
+            and create vendor bills directly from approved requests.
         </p>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <h3>Support Ukraine</h3>
+            <p>
+                Ukraine is still fighting for its freedom, its people, and its right to exist.
+                Russia`s full-scale war is not over. Every day, Ukrainian defenders continue to hold the line,
+                while civilians across the country live under the constant burden of danger, loss, and destruction.
+            </p>
+            <p><b>Glory to Ukraine. Glory to the defenders.</b></p>
+            <div class="oe_demo oe_picture oe_screenshot" style="text-align: center; margin-top: 16px;">
+                <img src="slava_ukraini.png" alt="Support Ukraine" class="oe_picture oe_screenshot"/>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -15,98 +32,18 @@
         <div class="oe_span12">
             <h3>Overview</h3>
             <p>
-                <b>Payment Request</b>
-                adds a structured workflow for handling payment requests before they become vendor bills.
-                It is especially useful when requesters are not accounting users, when a request does not start from a
-                standard supplier invoice,
+                <b>Payment Request</b> adds a pre-accounting workflow for handling payment requests before they become vendor bills.
+                It is especially useful when requesters are not accounting users, when the request does not start from a standard supplier invoice,
                 or when the requester does not know from which company the payment should be made.
             </p>
             <p>
-                Users can submit requests with amount, currency, due date, partner, description, attachments,
-                and payment details. Finance users can then review requests, communicate with the requester,
-                move them through processing stages, and create vendor bills directly from the request record.
+                Portal users can submit and track their own requests without a paid internal Odoo license.
+                They can follow statuses, read notes, and communicate directly in the request thread.
+                Finance users can review requests, choose the proper company, and create vendor bills from the request.
             </p>
             <p>
-                The module supports both
-                <b>invoice-based</b>
-                and
-                <b>non-invoice</b>
-                payment requests.
-                When no invoice is available, the requester can provide alternative payment information such as
-                bank card, international bank account, PayPal, Payoneer / Wise, or crypto wallet / Bitcoin details.
-            </p>
-            <p>
-                A built-in
-                <b>portal interface</b>
-                allows requesters to submit and track their own requests
-                without needing a paid internal Odoo user license.
-            </p>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_span12">
-            <h3>Why Not Standard Vendor Bill Creation?</h3>
-            <p>
-                In standard Odoo flows, vendor bills are typically created directly by finance users or received through
-                email aliases.
-                That works well when the accounting structure is already clear, but it is less convenient when requests
-                come from employees,
-                contractors, vendors, or other requesters who do not know how the bill should be registered.
-            </p>
-            <p>
-                In many real-life cases, especially in
-                <b>multi-company</b>
-                environments, the requester may not know from which company
-                the payment should be made. They may only know that payment is needed and provide the amount, purpose,
-                attachments, and payout details. The finance team then reviews the request and decides how it should be
-                processed,
-                including the correct company and accounting setup.
-            </p>
-            <p>
-                This module provides a more flexible pre-accounting workflow than standard bill creation by email alias.
-                It is especially useful when the request is not yet ready to become a vendor bill
-                or when the payout details do not fit a classic supplier invoice flow.
-            </p>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_span12">
-            <h3>Portal Access for Requesters</h3>
-            <p>
-                One of the key advantages of this module is that a requester does not need to be a paid internal Odoo
-                user.
-                You can grant portal access to vendors, contractors, employees, or other requesters and let them work
-                with their own payment requests online.
-            </p>
-            <ul>
-                <li>Submit new payment requests through the portal</li>
-                <li>Track request status without contacting the finance team manually</li>
-                <li>Read request updates, notes, and discussion history</li>
-                <li>Add comments or clarifications when needed</li>
-                <li>Receive notifications as a follower of their own request</li>
-                <li>Access only their own requests through portal security rules</li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_span12">
-            <h3>Automatic Followers and Notifications</h3>
-            <p>
-                The module improves coordination by automatically subscribing the relevant users to the request.
-                The operation manager becomes a follower on the created request and receives notifications when the
-                request changes.
-                The requester is also subscribed as a follower, which allows them to monitor statuses, read notes and
-                discussion,
-                add comments, and receive messages related to their own request.
+                The module supports both invoice-based and non-invoice requests, including alternative payout details
+                such as bank card, international bank account, PayPal, Payoneer / Wise, and Bitcoin.
             </p>
         </div>
     </div>
@@ -118,57 +55,18 @@
             <h3>Key Features</h3>
             <ul>
                 <li>Create payment requests from Odoo or portal</li>
-                <li>Allow external and portal users to submit requests without a paid internal user license</li>
+                <li>Allow portal users to submit requests without a paid internal user license</li>
                 <li>Support invoice-based and non-invoice request flows</li>
-                <li>Store amount, currency, due date, partner, requester, project, and description</li>
-                <li>Upload invoice or supporting files to the request</li>
-                <li>Keep request communication in chatter</li>
-                <li>Automatically subscribe the operation manager as a follower on created requests</li>
-                <li>Notify the operation manager about request updates and changes</li>
+                <li>Support alternative payout details such as bank card, Payoneer / Wise, and Bitcoin</li>
+                <li>Track requests through statuses: New, Processing, Stuck, In Payment, Paid, Cancelled</li>
                 <li>Subscribe the requester as a follower on their request</li>
-                <li>Allow the requester to follow statuses, notes, and communication history</li>
-                <li>Notify the requester about updates and messages related to their request</li>
-                <li>Track requests through operational statuses</li>
+                <li>Automatically subscribe the operation manager and notify them about changes</li>
+                <li>Let requesters follow statuses, notes, and communication history</li>
                 <li>Create vendor bills directly from payment requests</li>
                 <li>Copy attachments from the request to the created vendor bill</li>
-                <li>Keep a direct link between the request and the created vendor bill</li>
-                <li>Optional
-                    <b>To Check</b>
-                    flow during bill creation
-                </li>
-                <li>Provide a practical alternative to standard vendor bill creation by email alias</li>
                 <li>Support multi-company workflows where finance selects the final company during review</li>
-                <li>Allow requesters to submit payment needs even when they do not know the target company</li>
-                <li>Support alternative payout details such as bank card, Payoneer / Wise, or Bitcoin</li>
-                <li>Restrict portal users to their own requests</li>
-                <li>Support analytic distribution from the selected department or project setup when configured</li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_span6">
-            <h3>Supported Payment Details</h3>
-            <ul>
-                <li>Invoice-based requests</li>
-                <li>Bank card</li>
-                <li>International bank account</li>
-                <li>PayPal</li>
-                <li>Payoneer / Wise</li>
-                <li>Crypto wallet / Bitcoin</li>
-            </ul>
-        </div>
-        <div class="oe_span6">
-            <h3>Request Statuses</h3>
-            <ul>
-                <li>New</li>
-                <li>Processing</li>
-                <li>Stuck</li>
-                <li>In Payment</li>
-                <li>Paid</li>
-                <li>Cancelled</li>
+                <li>Provide a practical alternative to vendor bill creation by email alias</li>
+                <li>Support a dedicated <b>To Check</b> review flow for vendor bills</li>
             </ul>
         </div>
     </div>
@@ -179,62 +77,13 @@
         <div class="oe_span12">
             <h3>How It Works</h3>
             <ol>
-                <li>A user creates a payment request from Odoo or through the portal.</li>
+                <li>A requester creates a payment request from Odoo or through the portal.</li>
                 <li>The request includes financial details, payment information, and supporting documents.</li>
-                <li>In multi-company scenarios, the requester can submit the payment need without knowing which company
-                    should process it.
-                </li>
-                <li>Finance users review the request, communicate with the requester if needed, and update its status as
-                    it moves through the workflow.
-                </li>
-                <li>The requester can follow the request, read notes and discussion, and add clarifications directly
-                    from the portal.
-                </li>
+                <li>Finance users review the request, communicate with the requester, and update its status.</li>
+                <li>In multi-company cases, finance selects the correct company during processing.</li>
                 <li>When ready, the finance user creates a vendor bill directly from the request.</li>
-                <li>Attachments are copied to the bill, and the bill remains linked to the original request for full
-                    traceability.
-                </li>
+                <li>Attachments and communication remain linked for full traceability.</li>
             </ol>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_span12">
-            <h3>Business Benefits</h3>
-            <ul>
-                <li>Standardizes incoming payment requests</li>
-                <li>Reduces manual communication between requesters and finance teams</li>
-                <li>Allows request submission without buying internal user licenses for each requester</li>
-                <li>Improves visibility of request progress for both finance users and requesters</li>
-                <li>Keeps supporting documents in one place</li>
-                <li>Improves traceability from request to accounting document</li>
-                <li>Simplifies vendor bill preparation</li>
-                <li>Keeps request communication transparent for both finance and requester</li>
-                <li>Automatically notifies responsible users about request changes</li>
-                <li>Improves coordination by subscribing both the operation manager and requester to the request</li>
-                <li>Works better than standard email alias bill creation when requesters are not accounting users</li>
-                <li>Helps finance teams handle payment requests in multi-company environments</li>
-                <li>Allows finance to decide the correct company and accounting flow after request submission</li>
-                <li>Supports alternative payout methods beyond standard invoice-based supplier billing</li>
-            </ul>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_span12">
-            <h3>Use Cases</h3>
-            <ul>
-                <li>Contractor payment requests</li>
-                <li>Requests from portal users who should not have internal Odoo licenses</li>
-                <li>Payments without supplier invoices</li>
-                <li>Payments with alternative payout details such as Payoneer, Wise, or Bitcoin</li>
-                <li>Multi-company finance operations where the final company is selected by finance during review</li>
-                <li>Pre-accounting workflows before vendor bill creation</li>
-            </ul>
         </div>
     </div>
 </section>
@@ -254,38 +103,13 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <h3>3. Payment Requests entry point in the portal</h3>
-            <p>
-                Authorized portal users can access the payment request feature directly from their
-                <b>My Account</b>
-                page.
-                A dedicated
-                <b>Payment Requests</b>
-                menu tile gives users a simple entry point to create new requests
-                and track existing ones without needing backend access.
-            </p>
-            <div class="oe_demo oe_picture oe_screenshot">
-                <img src="portal_payment_requests_home.png" alt="Payment Requests menu on portal account page"
-                     class="oe_picture oe_screenshot"/>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_span12">
             <h3>1. Controlled portal access to payment requests</h3>
             <p>
-                Enable the
-                <b>Payment Requests</b>
-                option on selected portal users to allow access to the payment request feature.
-                This makes it possible to grant request access only to specific external users, while keeping the
-                feature unavailable for other portal users.
+                Enable the <b>Payment Request Portal</b> option on selected portal users to allow access to the feature.
+                This makes it possible to grant request access only to specific external users.
             </p>
             <div class="oe_demo oe_picture oe_screenshot">
-                <img src="portal_user_payment_requests_access.png" alt="Portal user access to payment requests"
-                     class="oe_picture oe_screenshot"/>
+                <img src="portal_user_payment_requests_access.png" alt="Portal user access to payment requests" class="oe_picture oe_screenshot"/>
             </div>
         </div>
     </div>
@@ -294,17 +118,13 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <h3>2. Automatic subscription of operational managers</h3>
+            <h3>2. Automatic subscription of operation managers</h3>
             <p>
-                Enable the
-                <b>Operational Manager</b>
-                option on internal users who should automatically follow created payment requests.
-                When a new request is submitted, the operational manager is subscribed as a follower and receives
-                notifications about updates, comments, and status changes.
+                Enable the <b>Operation Manager</b> option on internal users who should automatically follow created payment requests
+                and receive notifications about updates, comments, and status changes.
             </p>
             <div class="oe_demo oe_picture oe_screenshot">
-                <img src="operational_manager_user.png" alt="Operational Manager setting on internal user"
-                     class="oe_picture oe_screenshot"/>
+                <img src="operational_manager_user.png" alt="Operation Manager setting on internal user" class="oe_picture oe_screenshot"/>
             </div>
         </div>
     </div>
@@ -313,15 +133,15 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <h3>3. Payment request submission from portal</h3>
+            <h3>3. Payment request creation in portal</h3>
             <p>
-                Portal users can create payment requests without needing a paid internal Odoo license.
-                The form allows the requester to provide amount, purpose, attachments, and payout details, including
-                non-standard methods such as Payoneer, Wise, or Bitcoin.
+                Portal users can create payment requests without a paid internal Odoo license.
+                The form allows the requester to provide financial details, supporting documents,
+                and payout information, including non-standard methods such as bank card,
+                Payoneer / Wise, or Bitcoin.
             </p>
             <div class="oe_demo oe_picture oe_screenshot">
-                <img src="portal_request_create.png" alt="Portal payment request creation form"
-                     class="oe_picture oe_screenshot"/>
+                <img src="portal_request_create.png" alt="Portal payment request creation form" class="oe_picture oe_screenshot"/>
             </div>
         </div>
     </div>
@@ -332,17 +152,11 @@
         <div class="oe_span12">
             <h3>4. Portal tracking of submitted requests</h3>
             <p>
-                After submission, the requester can view their own payment requests in the portal.
-                This gives them visibility into request progress, current status, notes, discussion history, and related
-                communication without needing to contact the finance team separately.
+                Portal users can access their own payment requests from a dedicated portal page,
+                review statuses, and open request details without backend access.
             </p>
             <div class="oe_demo oe_picture oe_screenshot">
-                <img src="portal_request_list.png" alt="Portal list of payment requests"
-                     class="oe_picture oe_screenshot"/>
-            </div>
-            <div class="oe_demo oe_picture oe_screenshot">
-                <img src="portal_request_form_view.png" alt="Portal view form of payment requests"
-                     class="oe_picture oe_screenshot"/>
+                <img src="portal_request_list.png" alt="Portal list of payment requests" class="oe_picture oe_screenshot"/>
             </div>
         </div>
     </div>
@@ -351,15 +165,13 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <h3>5. Centralized request management for finance users</h3>
+            <h3>5. Payment request details and communication in portal</h3>
             <p>
-                Finance users can manage all payment requests from a dedicated backend list view.
-                This gives accounting and operations teams a centralized workspace to review incoming requests, monitor
-                statuses, and prioritize processing.
+                The requester can review request details, follow the current status,
+                read discussion history, and add comments directly in the thread.
             </p>
             <div class="oe_demo oe_picture oe_screenshot">
-                <img src="backend_request_list.png" alt="Backend list of payment requests"
-                     class="oe_picture oe_screenshot"/>
+                <img src="portal_request_form_view.png" alt="Portal payment request details and communication" class="oe_picture oe_screenshot"/>
             </div>
         </div>
     </div>
@@ -368,16 +180,13 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <h3>6. Full request review in the backend</h3>
+            <h3>6. Centralized request management for finance users</h3>
             <p>
-                The backend form gives finance users access to all request details, attachments, comments, followers,
-                and communication in one place.
-                It is especially useful in multi-company environments where the requester may not know which company
-                should process the payment.
+                Finance users can manage all payment requests from a dedicated backend list view
+                and prioritize processing in one place.
             </p>
             <div class="oe_demo oe_picture oe_screenshot">
-                <img src="backend_request_form.png" alt="Backend payment request form"
-                     class="oe_picture oe_screenshot"/>
+                <img src="backend_request_list.png" alt="Backend list of payment requests" class="oe_picture oe_screenshot"/>
             </div>
         </div>
     </div>
@@ -386,17 +195,43 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <h3>7. Direct vendor bill creation from the request</h3>
+            <h3>7. Full request review in the backend</h3>
             <p>
-                Finance users can create a vendor bill directly from the payment request using a dedicated wizard.
-                At this stage, they can choose the correct company, accounting options, and review flow, which makes the
-                module more flexible than standard bill creation by email alias.
+                The backend form gives finance users access to request details, payout information,
+                comments, followers, and communication in one place.
+            </p>
+            <div class="oe_demo oe_picture oe_screenshot">
+                <img src="backend_request_form.png" alt="Backend payment request form" class="oe_picture oe_screenshot"/>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <h3>8. Direct vendor bill creation from the request</h3>
+            <p>
+                Finance users can create a vendor bill directly from the payment request using a dedicated wizard,
+                choosing the company, purchase journal, expense account, and whether the bill should be marked <b>To Check</b>.
             </p>
             <div class="oe_demo oe_picture oe_screenshot">
                 <img src="bill_creation_wizard.png" alt="Vendor bill creation wizard" class="oe_picture oe_screenshot"/>
             </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <h3>9. Created vendor bill linked to the request</h3>
+            <p>
+                Once created, the vendor bill remains linked to the original payment request,
+                providing clear traceability between the request and the accounting document.
+            </p>
             <div class="oe_demo oe_picture oe_screenshot">
-                <img src="bill_created.png" alt="Vendor bill created" class="oe_picture oe_screenshot"/>
+                <img src="bill_created.png" alt="Created vendor bill from payment request" class="oe_picture oe_screenshot"/>
             </div>
         </div>
     </div>
@@ -405,15 +240,13 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <h3>8. Dedicated review queue for bills to check</h3>
+            <h3>10. Dedicated review queue for bills to check</h3>
             <p>
-                The module includes a dedicated menu for vendor bills marked <b>To Check</b>.
-                This helps finance teams separate bills that still require review and supports a more controlled
-                accounting workflow.
+                The module includes a dedicated menu for vendor bills marked <b>To Check</b>,
+                helping finance teams separate bills that still require review.
             </p>
             <div class="oe_demo oe_picture oe_screenshot">
-                <img src="vendor_bills_to_check_menu.png" alt="Vendor Bills To Check menu"
-                     class="oe_picture oe_screenshot"/>
+                <img src="vendor_bills_to_check_menu.png" alt="Vendor Bills To Check menu" class="oe_picture oe_screenshot"/>
             </div>
         </div>
     </div>
@@ -427,26 +260,6 @@
                 This module is designed for Odoo 18 environments using Accounting, Portal, and Discuss features.
                 Final behavior may depend on your configuration, access rights, and related accounting setup.
             </p>
-        </div>
-    </div>
-</section>
-
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_span12">
-            <h3>Support Ukraine</h3>
-            <p>
-                Ukraine is still fighting for its freedom, its people, and its right to exist.
-                Russia`s full-scale war is not over. Every day, Ukrainian defenders continue to hold the line
-                while civilians across the country live under the constant burden of danger, loss, and destruction.
-                The reality of this war is not historical or symbolic - it is present, ongoing, and paid for in human lives.
-            </p>
-            <p>
-                Glory to Ukraine. Glory to the defenders.
-            </p>
-        </div>
-        <div style="text-align:center; margin-top:20px;">
-            <img src="slava_ukraini.png" alt="Слава Україні!" style="width:80%; max-width:800px;">
         </div>
     </div>
 </section>
